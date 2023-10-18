@@ -13,7 +13,7 @@ const app = express()
 
 app.use(express.json())
 
-app.use(cors({origin:["http://localhost:3000","http://localhost:3001","https://lembda.vercel.app"]}))
+app.use(cors({origin:["http://localhost:3000","http://localhost:3001","https://lembda.vercel.app","https://admin-lembda.netlify.app","https://admin-lembda.vercel.app","http://localhost:5173"]}))
 
 main().then(console.log("database runnig...")).catch(err => console.log(err));
 

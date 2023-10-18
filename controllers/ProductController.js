@@ -1,4 +1,4 @@
-import fs from "fs"
+import fs from "node:fs"
 import mongoose, { mongo } from "mongoose";
 import multer from "multer"
 import requestIp from "request-ip";
@@ -13,6 +13,9 @@ import CartModel from "../models/CartModel.js";
 
 const imageUploadStorage = multer.diskStorage({
 	destination:(req,file,cb)=>{
+		if(!fs.existsSync("./public/images")){
+            fs.mkdirSync("./public/images")
+        }
 		cb(null,"public/images")
 	},
 	filename:(req,file,cb)=>{

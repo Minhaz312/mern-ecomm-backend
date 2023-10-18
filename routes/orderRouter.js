@@ -1,5 +1,5 @@
 import express from "express"
-import { acceptOrder, cartToOrder, deliveryConfirm, getAllDeliveredOrder, getAllOrder } from "../controllers/OrderController.js"
+import { acceptOrder, cartToOrder, deliveryConfirm, getAllDeliveredOrder, getAllOrder, getAllOrderByUserId } from "../controllers/OrderController.js"
 import AuthMiddleware from "../middleware/AuthMiddleware.js"
 
 const orderRouter = express.Router()
@@ -9,6 +9,9 @@ orderRouter.post("/place/all-cart-product",AuthMiddleware,(req,res)=>{
 })
 orderRouter.get("/get/all",(req,res)=>{// admin authMiddleware shuld be added later
     getAllOrder(req,res)
+})
+orderRouter.get("/get/by-user/all",AuthMiddleware,(req,res)=>{// admin authMiddleware shuld be added later
+    getAllOrderByUserId(req,res)
 })
 orderRouter.get("/get/all-delivered",(req,res)=>{// admin authMiddleware shuld be added later
     getAllDeliveredOrder(req,res)

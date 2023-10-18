@@ -20,8 +20,13 @@ export const createAccount = async (req,res) => {
             res.status(400).json({success:false,token:null,message:"failed to create account"})
         }
     } catch (error) {
-        console.log(error)
-        res.status(500).json({success:false,token:null,message:"failed to create account"})
+        if(error.message.indexOf('duplicate key error') !== -1){
+            res.status(400).json({success:false,token:null,message:"Mobile number is already taken"})
+        }else if(error.message.indexOf('Invalid Mobile Number') !== -1){
+            res.status(400).json({success:false,token:null,message:"Invalid Mobile Number"})
+        } else {
+            res.status(500).json({success:false,token:null,message:"failed to create account"})
+        }
     }
 }
 export const updateAccount = async (req,res) => {
@@ -60,7 +65,7 @@ export const getUserById = async (req,res) => {
     try {
         const user = await UserModel.findById(mongoose.Types.ObjectId(req.body.userId)).select({name:1,mobile:1,password:-1}).exec();
         const cartList = await CartModel.find({userId:mongoose.Types.ObjectId(req.body.userId)}).populate("productId").exec();
-        const orderList = await OrderModel.find({userId:mongoose.Types.ObjectId(req.body.userId)});
+        const orderList = await OrderModel.find({user:mongoose.Types.ObjectId(req.body.userId)});
         let userData = {
             name:user.name,
             mobile:user.mobile,

@@ -94,6 +94,15 @@ export const getAllOrder = async (req,res) =>{
         res.status(500).json({success:false,data:[]})
     }
 }
+export const getAllOrderByUserId = async (req,res) =>{
+    try {
+        const result = await OrderModel.find({user:mongoose.Types.ObjectId(req.body.userId),delivered:{$ne:true}});
+        res.status(200).json({success:true,data:result})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({success:false,data:[]})
+    }
+}
 export const getAllDeliveredOrder = async (req,res) =>{
     try {
         const result = await OrderModel.find({delivered:true,accepted:true});

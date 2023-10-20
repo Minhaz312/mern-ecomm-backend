@@ -8,6 +8,7 @@ import categoryRouter from "./routes/categoryRouter.js"
 import adRouter from "./routes/adsRouter.js"
 import userRouter from "./routes/userRouter.js"
 import orderRouter from './routes/orderRouter.js'
+import cartRouter from './routes/cartRouter.js'
 
 const app = express()
 
@@ -35,6 +36,7 @@ app.get('/', (req, res) => {
 app.use(express.static("public"))
 
 app.use("/api/product",productRouter);
+app.use("/api/cart",cartRouter);
 app.use("/api/order",orderRouter)
 app.use("/api/category",categoryRouter);
 app.use("/api/ads",adRouter)

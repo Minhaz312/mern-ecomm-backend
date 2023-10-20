@@ -3,6 +3,7 @@ import has from "../helper/inputHas.js";
 import CartModel from "../models/CartModel.js";
 import OrderModel from "../models/OrderModel.js";
 import ProductModel from "../models/ProductModel.js";
+import UserModel from "../models/UserModel.js";
 
 export const cartToOrder = async (req,res) =>{
     try {
@@ -26,7 +27,10 @@ export const cartToOrder = async (req,res) =>{
                 totalPrice:item.totalPrice})
         })
         if(has(data,"userId") && has(data,"shippingAddress")){
-            orderList.user = mongoose.Types.ObjectId(data.userId)
+            const user = await UserModel.findOne({_id:mongoose.Types.ObjectId(data.userId)})
+            orderList.userId = user._id;
+            orderList.userName = user.name
+            orderList.userMobile = user.mobile
             orderList.shippingAddress = data.shippingAddress
             orderList.productList = productList
             orderList.accepted = false

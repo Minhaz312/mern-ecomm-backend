@@ -63,17 +63,26 @@ export const deleteAccount = (req,res) => {
 
 export const getUserById = async (req,res) => {
     try {
-        const user = await UserModel.findById(mongoose.Types.ObjectId(req.body.userId)).select({name:1,mobile:1,password:-1}).exec();
-        const cartList = await CartModel.find({userId:mongoose.Types.ObjectId(req.body.userId)}).populate("productId").exec();
-        const orderList = await OrderModel.find({user:mongoose.Types.ObjectId(req.body.userId)});
-        let userData = {
-            name:user.name,
-            mobile:user.mobile,
-            address:user.address,
-            cartList:cartList,
-            orderList:orderList
+        console.log('req.body.authId: ',req.body.authId)
+        const authId = mongoose.Types.ObjectId(req.body.authId)
+        const user = await UserModel.findOne({_id:authId});
+        if(user==null){
+            res.status(401)
+            res.json({success:false,message:"Unauthorized"})
+        }else{
+            console.log('authId: ',authId)
+            console.log('user: ',user)
+            const cartList = await CartModel.find({userId:authId});
+            const orderList = await OrderModel.find({user:authId});
+            let userData = {
+                name:user.name,
+                mobile:user.mobile,
+                address:user.address,
+                cartList:cartList,
+                orderList:orderList
+            }
+            res.status(200).json({success:true,data:userData}); 
         }
-        res.status(200).json({success:true,data:userData}); 
     } catch (error) {
         console.log(error)
         res.status(500).json({success:false,data:{}})
@@ -86,13 +95,12 @@ export const login = async (req,res) => {
         const result = await UserModel.findOne({
             mobile:mobile,
             password:password
-        })
-        console.log("user found: ",result)
+        }).select({password:false}).exec()
         if(result!=null){
-            const authToken = jwt.sign({loggedin:true,me:result._id},process.env.JWT_SECRETE,{algorithm:"HS256"})
-            res.status(200).json({success:true, token:authToken, message:"account created successfully"})
+            const authToken = jwt.sign({loggedin:true,authId:result._id},process.env.JWT_SECRETE,{algorithm:"HS256"})
+            res.status(200).json({success:true, token:authToken, message:"Logged in successfully"})
         }else {
-            res.status(400).json({success:false,token:null, message:"failed to create account"})
+            res.status(400).json({success:false,token:null, message:"failed to login"})
         }
     } catch (error) {
         console.log(error)

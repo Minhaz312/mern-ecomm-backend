@@ -12,7 +12,7 @@ userRouter.post("/account/create",(req,res)=>{
     createAccount(req,res);
 })
 
-userRouter.put("/account/update",(req,res)=>{
+userRouter.put("/account/update",AuthMiddleware,(req,res)=>{
     updateAccount(req,res)
 })
 

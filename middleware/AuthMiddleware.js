@@ -5,10 +5,11 @@ const AuthMiddleware = (req,res,next) => {
     console.log(token)
     jwt.verify(token,process.env.JWT_SECRETE,(err,decoded)=>{
         if(err){
+            console.log('decode failed: ',err)
             res.status(401).json({success:false});
         }else {
             if(decoded!==null){
-                req.body.userId = decoded.me;
+                req.body.authId = decoded.authId;
                 next()
             }else {
                 res.status(401).json({success:false});

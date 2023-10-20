@@ -371,9 +371,7 @@ export const addProductToCart = async (req,res)=>{
 		const data = req.body;
 		let cartItem = {}
 		console.log("data body: ",req.body)
-		if(has(data,"userId")){
-			cartItem.userId = mongoose.Types.ObjectId(data.userId)
-		}
+		cartItem.userId = mongoose.Types.ObjectId(data.authId)
 		if(has(data,"productId")){
 			data.productId = mongoose.Types.ObjectId(data.productId)
 		}
@@ -386,19 +384,22 @@ export const addProductToCart = async (req,res)=>{
 		if(has(data,"quantity")){
 			cartItem.quantity = data.quantity
 		}
-		const productPrice = await ProductModel.findOne({_id:mongoose.Types.ObjectId(data.productId),quantity:{$gte:Number(data.quantity)}}).select({price:1,quantity:1}).exec();
-		console.log(productPrice)
-		if(productPrice==null){
+		const product = await ProductModel.findOne({_id:mongoose.Types.ObjectId(data.productId),quantity:{$gte:Number(data.quantity)}});
+		if(product==null){
 			res.status(400).json({success:false,message:"Maybe product is out of stock!"})
 		}else {
 			cartItem.productId = mongoose.Types.ObjectId(data.productId)
-			cartItem.totalPrice = Number(cartItem.quantity)*Number(productPrice.price)
+			cartItem.productImage = product.primaryImage,
+			cartItem.productPrice = product.price,
+			cartItem.productName = product.name
+			cartItem.productId = mongoose.Types.ObjectId(data.productId)
+			cartItem.totalPrice = Number(cartItem.quantity)*Number(product.price)
 			console.log("cartItem: ",cartItem)
 			const result = await CartModel.create(cartItem);
 			if(result._id!=undefined){
-				let avaialbleProduct = Math.abs(Number(productPrice.quantity)-Number(data.quantity))
+				let avaialbleProduct = Math.abs(Number(product.quantity)-Number(data.quantity))
 				await ProductModel.updateOne({_id:mongoose.Types.ObjectId(data.productId)},{quantity:avaialbleProduct})
-				res.status(200).json({success:true,message:"Item added"});
+				res.status(200).json({success:true,data:result,message:"Item added"});
 			}else {
 				res.status(500).json({success:false,message:"Failed to add item"});
 			}
@@ -406,6 +407,20 @@ export const addProductToCart = async (req,res)=>{
 	} catch (error) {
 		console.log(error)
 		res.status(500).json({success:false,message:"Failed to add item"});
+	}
+}
+export const updateCartItemQuantity = async (req,res) => {
+	try {
+		const authId = mongoose.Types.ObjectId(req.body.authId)
+		const cartId = mongoose.Types.ObjectId(req.body.cartId);
+		const {quantity,totalPrice} = req.body;
+		await CartModel.updateOne({_id:cartId,userId:authId},{$set:{quantity,totalPrice}})
+		res.status(200)
+		res.json({success:true,message:"Product Updated"})
+	} catch (error) {
+		console.log('error: ',error)
+		res.status(500)
+		res.json({success:false,message:"Failed to update"})
 	}
 }
 export const getAllCartItem = async (req,res) => {

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addNewProduct, addProductToCart, deleteCartById, deleteMultipleProduct, deleteProduct, getAllCartItem, getAllProduct, getPaginatedProduct, getProductByCategory, getProductById, getProductByStock, getSuggestedProduct, getTopProductByPurchasedAmount, searchProduct, updateProductWithoutImage } from "../controllers/ProductController.js";
+import { addNewProduct, addProductToCart, deleteCartById, deleteMultipleProduct, deleteProduct, getAllCartItem, getAllProduct, getPaginatedProduct, getProductByCategory, getProductById, getProductByStock, getSuggestedProduct, getTopProductByPurchasedAmount, searchProduct, updateCartItemQuantity, updateProductWithoutImage } from "../controllers/ProductController.js";
 import AuthMiddleware from "../middleware/AuthMiddleware.js";
 
 const productRouter = Router()
@@ -53,25 +53,6 @@ productRouter.delete("/delete/:id",(req,res)=>{
     deleteProduct(req,res)
 })
 
-
-
-// user actioned routes
-
-productRouter.post("/cart/add",AuthMiddleware,(req,res)=>{
-    addProductToCart(req,res)
-})
-productRouter.post("/cart/update",(req,res)=>{
-    addProductToCart(req,res)
-})
-productRouter.post("/cart/delete",(req,res)=>{
-    addProductToCart(req,res)
-})
-productRouter.post("/cart/get/all",(req,res)=>{
-    getAllCartItem(req,res)
-})
-productRouter.delete("/cart/delete/:id",(req,res)=>{
-    deleteCartById(req,res)
-})
 
 
 

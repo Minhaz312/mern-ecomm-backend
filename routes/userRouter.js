@@ -4,21 +4,12 @@ import AuthMiddleware from "../middleware/AuthMiddleware.js"
 const userRouter = express.Router()
 
 
-userRouter.post("/account/login",(req,res)=>{
-    login(req,res)
-})
+userRouter.post("/account/login",login)
 
-userRouter.post("/account/create",(req,res)=>{
-    createAccount(req,res);
-})
+userRouter.post("/account/create",createAccount)
 
-userRouter.put("/account/update",AuthMiddleware,(req,res)=>{
-    updateAccount(req,res)
-})
+userRouter.put("/account/update",AuthMiddleware,updateAccount)
 
-
-userRouter.get("/get",AuthMiddleware,(req,res)=>{
-    getUserById(req,res);
-})
+userRouter.get("/get",AuthMiddleware,getUserById)
 
 export default userRouter

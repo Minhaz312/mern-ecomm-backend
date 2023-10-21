@@ -2,9 +2,9 @@ import jwt from "jsonwebtoken";
 
 const AuthMiddleware = (req,res,next) => {
     const token = req.headers.authentication;
-    console.log(token)
     jwt.verify(token,process.env.JWT_SECRETE,(err,decoded)=>{
         if(err){
+            console.log('token: ',token)
             console.log('decode failed: ',err)
             res.status(401).json({success:false});
         }else {

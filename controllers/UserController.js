@@ -96,6 +96,7 @@ export const login = async (req,res) => {
             mobile:mobile,
             password:password
         }).select({password:false}).exec()
+        console.log('login data: ',req.body)
         if(result!=null){
             const authToken = jwt.sign({loggedin:true,authId:result._id},process.env.JWT_SECRETE,{algorithm:"HS256"})
             res.status(200).json({success:true, token:authToken, message:"Logged in successfully"})

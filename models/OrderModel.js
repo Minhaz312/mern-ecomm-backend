@@ -8,7 +8,7 @@ const orderSchema = new Schema({
         productId:{type:mongoose.Types.ObjectId,required:true},
         productName:{type:String,required:true},
         productImage:{type:String,required:true},
-        productCategory:{type:String,required:true},
+        productPriceDiscount:{type:Number,required:true},
         productSize:{type:String,required:false,default:null},
         productColor:{type:String,required:false,default:null},
         quantity:{type:Number,required:true},

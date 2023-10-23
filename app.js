@@ -19,7 +19,7 @@ app.use(cors({origin:["http://localhost:3000","http://localhost:3001","https://l
 main().then(console.log("database runnig...")).catch(err => console.log(err));
 
 async function main() {
-  const prod = true
+  const prod = false
   if(prod){
     await mongoose.connect(process.env.MONGODB_PROD_URL);
   }else{

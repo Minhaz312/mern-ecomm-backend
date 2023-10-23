@@ -5,11 +5,10 @@ import { addProductToCart, deleteCartById, getAllCartItem, updateCartItemQuantit
 
 const cartRouter = express.Router()
 
+cartRouter.post("/get/all",getAllCartItem)
 cartRouter.post("/add",AuthMiddleware,addProductToCart)
 cartRouter.post("/update/quantity",AuthMiddleware,updateCartItemQuantity)
-cartRouter.post("/delete",addProductToCart)
-cartRouter.post("/get/all",getAllCartItem)
-cartRouter.delete("/delete/:id",deleteCartById)
+cartRouter.delete("/delete",deleteCartById)
 
 
 export default cartRouter;

@@ -98,14 +98,16 @@ export const login = async (req,res) => {
         }).select({password:false}).exec()
         console.log('login data: ',req.body)
         if(result!=null){
+            console.log('login reuqest user found')
             const authToken = jwt.sign({loggedin:true,authId:result._id},process.env.JWT_SECRETE,{algorithm:"HS256"})
             res.status(200).json({success:true, token:authToken, message:"Logged in successfully"})
         }else {
+            console.log('login request user not found')
             res.status(400).json({success:false,token:null, message:"failed to login"})
         }
     } catch (error) {
         console.log(error)
-        res.status(500).json({success:false,token:null, message:"failed to create account"})
+        res.status(500).json({success:false,token:null, message:"failed to login"})
     }
 }
 export const passwordReset = (req,res) => {

@@ -390,10 +390,16 @@ export const addProductToCart = async (req,res)=>{
 		}else {
 			cartItem.productId = mongoose.Types.ObjectId(data.productId)
 			cartItem.productImage = product.primaryImage,
+			cartItem.productPriceDiscount = product.discount,
 			cartItem.productPrice = product.price,
 			cartItem.productName = product.name
 			cartItem.productId = mongoose.Types.ObjectId(data.productId)
-			cartItem.totalPrice = Number(cartItem.quantity)*Number(product.price)
+			if(product.discount>0){
+				const priceAfterDiscount = product.price - product.price*(product.discount/100)
+				cartItem.totalPrice = priceAfterDiscount
+			}else{
+				cartItem.totalPrice = Number(cartItem.quantity)*Number(product.price)
+			}
 			console.log("cartItem: ",cartItem)
 			const result = await CartModel.create(cartItem);
 			if(result._id!=undefined){
@@ -434,10 +440,18 @@ export const getAllCartItem = async (req,res) => {
 }
 export const deleteCartById = async (req,res) => {
 	try {
-		const id = req.params.id
-		const result = await CartModel.deleteOne({_id:mongoose.Types.ObjectId(id)});
-		if(result.acknowledged){
-			res.status(200).json({success:true});
+		const id = req.body.id
+		if(id.length>0){
+			let formatedIdList = [];
+			id.map(item=>{
+				formatedIdList.push(mongoose.Types.ObjectId(item))
+			})
+			const result = await CartModel.deleteMany({_id:formatedIdList});
+			if(result.acknowledged){
+				res.status(200).json({success:true});
+			}else {
+				res.status(400).json({success:false});
+			}
 		}else {
 			res.status(400).json({success:false});
 		}

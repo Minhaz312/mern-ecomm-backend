@@ -9,37 +9,43 @@ export const cartToOrder = async (req,res) =>{
     try {
         const data = req.body;
         console.log("data: ",data)
-        const cartList = await CartModel.find({userId:mongoose.Types.ObjectId(data.userId)}).populate("productId").exec();
+        const cartList = await CartModel.find({userId:mongoose.Types.ObjectId(data.authId)}).populate("productId").exec();
         let cartItemIdList = []
         let orderList = {}
         let productList = []
         cartList.map(item=>{
-            // console.log(item.productId)
             cartItemIdList.push(item._id)
             productList.push({
                 productId:item.productId._id,
-                productName:item.productId.name,
-                productImage:item.productId.primaryImage,
-                productCategory:item.productId.category.name,
+                productName:item.productName,
+                productImage:item.productImage,
+                productPriceDiscount:item.productPriceDiscount,
                 productSize:item.productSize,
                 productColor:item.productColor,
+                productPriceDiscount:item.productPriceDiscount,
                 quantity:item.quantity,
                 totalPrice:item.totalPrice})
         })
-        if(has(data,"userId") && has(data,"shippingAddress")){
-            const user = await UserModel.findOne({_id:mongoose.Types.ObjectId(data.userId)})
+        if(has(data,"shippingAddress")){
+            const user = await UserModel.findOne({_id:mongoose.Types.ObjectId(data.authId)})
             orderList.userId = user._id;
             orderList.userName = user.name
             orderList.userMobile = user.mobile
             orderList.shippingAddress = data.shippingAddress
             orderList.productList = productList
             orderList.accepted = false
-        }
-        const result = await OrderModel.create(orderList);
-        if(result){
-            await CartModel.deleteMany({_id:{$in:cartItemIdList}});
-            res.status(200).json({success:true,message:"order placed successfully!"})
-        }else {
+            console.log('orderList: ',orderList)
+            const result = await OrderModel.create(orderList);
+            console.log('order result: ',result)
+            if(result){
+                await CartModel.deleteMany({_id:{$in:cartItemIdList}});
+                res.status(200).json({success:true,message:"order placed successfully!"})
+            }else {
+                console.log('failed to order: ',result)
+                res.status(400).json({success:false,message:"failed to order!"})
+            }
+        }else{
+            console.log('failed to order')
             res.status(400).json({success:false,message:"failed to order!"})
         }
     } catch (error) {

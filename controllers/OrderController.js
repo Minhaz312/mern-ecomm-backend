@@ -36,17 +36,15 @@ export const cartToOrder = async (req,res) =>{
             orderList.accepted = false
             console.log('orderList: ',orderList)
             const result = await OrderModel.create(orderList);
-            console.log('order result: ',result)
             if(result){
                 await CartModel.deleteMany({_id:{$in:cartItemIdList}});
-                res.status(200).json({success:true,message:"order placed successfully!"})
+                res.status(200).json({success:true,data:result,message:"order placed successfully!"})
             }else {
-                console.log('failed to order: ',result)
-                res.status(400).json({success:false,message:"failed to order!"})
+                res.status(400).json({success:false,data:null,message:"failed to order!"})
             }
         }else{
             console.log('failed to order')
-            res.status(400).json({success:false,message:"failed to order!"})
+            res.status(400).json({success:false,data:null,message:"failed to order!"})
         }
     } catch (error) {
         console.log(error)

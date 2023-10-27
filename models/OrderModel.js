@@ -11,11 +11,13 @@ const orderSchema = new Schema({
         productPriceDiscount:{type:Number,required:true},
         productSize:{type:String,required:false,default:null},
         productColor:{type:String,required:false,default:null},
+        productPrice:{type:Number,required:true},
         quantity:{type:Number,required:true},
         totalPrice:{type:Number,required:true},
     }],
     shippingAddress:{type:String, required:true},
     accepted:{type:Boolean,default:false},
+    deliveryDate:{type:Date,default:null},
     delivered:{type:Boolean,default:false},
     orderDate:{type:Date, default:Date.now}
 })

@@ -19,10 +19,10 @@ export const cartToOrder = async (req,res) =>{
                 productId:item.productId._id,
                 productName:item.productName,
                 productImage:item.productImage,
-                productPriceDiscount:item.productPriceDiscount,
+                productPriceDiscount:item.productPriceDiscount!=undefined?item.productPriceDiscount:0,
                 productSize:item.productSize,
+                productPrice:item.productPrice,
                 productColor:item.productColor,
-                productPriceDiscount:item.productPriceDiscount,
                 quantity:item.quantity,
                 totalPrice:item.totalPrice})
         })
@@ -50,7 +50,7 @@ export const cartToOrder = async (req,res) =>{
         }
     } catch (error) {
         console.log(error)
-        res.status(400).json({success:false,message:"failed to order!"})
+        res.status(500).json({success:false,message:"failed to order!"})
     }
 }
 export const acceptOrder = async (req,res) =>{
